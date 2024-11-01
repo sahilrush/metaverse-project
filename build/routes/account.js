@@ -8,4 +8,4 @@ const express_1 = __importDefault(require("express"));
 const accounts_1 = require("../actions/accounts");
 exports.accountRouter = express_1.default.Router();
 exports.accountRouter.post('/signup', accounts_1.signup);
-exports.accountRouter.post('/singin', accounts_1.signin);
+exports.accountRouter.post('/signin', accounts_1.signin);

@@ -5,20 +5,25 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.authenticate = void 0;
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
-const JWT_SECRET = "your_jwt_secret_key";
+const JWT_SECRET = "secret";
 const authenticate = (req, res, next) => {
     const authHeader = req.headers.authorization;
     if (!authHeader || !authHeader.startsWith("Bearer ")) {
-        return res.status(403).json({ error: "Forbidden" });
+        console.error("Authorization header is missing or invalid");
+        res.status(403).json({ error: "Forbidden" });
+        return;
     }
     const token = authHeader.split(" ")[1];
     try {
         const payload = jsonwebtoken_1.default.verify(token, JWT_SECRET);
         req.user = payload;
+        console.log("Authenticated user:", payload); // Log the authenticated user
         next();
     }
     catch (error) {
-        return res.status(403).json({ error: "Forbidden" });
+        console.error("JWT verification failed:", error);
+        res.status(403).json({ error: "Forbidden" });
+        return;
     }
 };
 exports.authenticate = authenticate;

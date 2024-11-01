@@ -16,34 +16,40 @@ exports.signin = exports.signup = void 0;
 const client_1 = require("@prisma/client");
 const bcryptjs_1 = __importDefault(require("bcryptjs"));
 const prisma = new client_1.PrismaClient();
-const JWT_SECRET = process.env.JWT_SECRET || 'your_secret_key';
+const JWT_SECRET = process.env.JWT_SECRET || 'secret';
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const signup = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    console.log("Request body:", req.body);
     const { username, password, role } = req.body;
-    if (role !== "ADMIN" && role !== "USER") {
+    console.log(role);
+    // Validate role
+    if (role !== "Admin" && role !== "User") {
         return res.status(400).json({ error: "Role must be either Admin or User" });
     }
     try {
+        // Check if the user already exists
         const existingUser = yield prisma.user.findUnique({
             where: {
-                username: username
-            }
+                username: username,
+            },
         });
         if (existingUser) {
             return res.status(400).json({ error: "Username already exists" });
         }
+        // Hash the password
         const passwordHash = yield bcryptjs_1.default.hash(password, 10);
+        // Create a new user
         const user = yield prisma.user.create({
             data: {
                 username: username,
                 password: passwordHash,
-                role: role
-            }
+                role: role,
+            },
         });
         return res.status(201).json({ message: "User created successfully" });
     }
     catch (err) {
-        console.error("Error inn /signup:", err);
+        console.error("Error in /signup:", err);
         return res.status(500).json({ error: "Internal server error" });
     }
 });

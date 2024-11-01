@@ -4,4 +4,4 @@ import { signin, signup } from "../actions/accounts";
 
 export const accountRouter = express.Router();
 accountRouter.post('/signup', signup);  
-accountRouter.post('/singin', signin);
+accountRouter.post('/signin', signin);
